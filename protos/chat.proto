@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package chat;
+
+// The chat service definition.
+service Greeter {
+    // Server gets a list of users and sends receipt status
+    rpc GetUsers(UsersList) returns (ReceiptStatus) {}
+
+    //Server gets user login and send them message
+    rpc SendMessage(User) returns (ChatMessage) {}
+
+    //Server gets messages in queue and subscribe to new ones
+    rpc ListMessages(stream ChatMessage) returns (ReceiptStatus) {}
+  }
+  
+  // The request message containing the users list.
+  message UsersList {
+    string login = 1;
+    string full_name = 2;
+  }
+  
+  // The response message containing the receipt status.
+  message ReceiptStatus {
+    string receipt_status = 1;
+  }
+
+  // The request message containing user login.
+  message User {
+    string login = 1;
+  }
+
+  // The message containing the users logins, time and message body.
+  message ChatMessage {
+    string user_from = 1;
+    string user_to = 2;
+    int32 time_on = 3;
+    string body = 4;
+  }
