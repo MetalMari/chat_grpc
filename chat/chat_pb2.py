@@ -19,30 +19,23 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nchat.proto\x12\x04\x63hat\"-\n\tUsersList\x12\r\n\x05login\x18\x01 \x01(\t\x12\x11\n\tfull_name\x18\x02 \x01(\t\"\'\n\rReceiptStatus\x12\x16\n\x0ereceipt_status\x18\x01 \x01(\t\"\x15\n\x04User\x12\r\n\x05login\x18\x01 \x01(\t\"P\n\x0b\x43hatMessage\x12\x11\n\tuser_from\x18\x01 \x01(\t\x12\x0f\n\x07user_to\x18\x02 \x01(\t\x12\x0f\n\x07time_on\x18\x03 \x01(\x05\x12\x0c\n\x04\x62ody\x18\x04 \x01(\t2\xa9\x01\n\x07Greeter\x12\x32\n\x08GetUsers\x12\x0f.chat.UsersList\x1a\x13.chat.ReceiptStatus\"\x00\x12.\n\x0bSendMessage\x12\n.chat.User\x1a\x11.chat.ChatMessage\"\x00\x12:\n\x0cListMessages\x12\x11.chat.ChatMessage\x1a\x13.chat.ReceiptStatus\"\x00(\x01\x62\x06proto3'
+  serialized_pb=b'\n\nchat.proto\x12\x04\x63hat\"\'\n\x0fGetUsersRequest\x12\x14\n\x0cusersrequest\x18\x01 \x01(\t\"Q\n\x04User\x1a\x16\n\x05Login\x12\r\n\x05login\x18\x01 \x01(\t\x1a\x31\n\x08\x46ullName\x12\x12\n\nfirst_name\x18\x02 \x01(\t\x12\x11\n\tlast_name\x18\x03 \x01(\t\"-\n\x10GetUsersResponse\x12\x19\n\x05users\x18\x01 \x03(\x0b\x32\n.chat.User\"z\n\x0eMessageRequest\x12#\n\tuser_from\x18\x01 \x01(\x0b\x32\x10.chat.User.Login\x12!\n\x07user_to\x18\x02 \x01(\x0b\x32\x10.chat.User.Login\x12\x12\n\ncreated_at\x18\x03 \x01(\x05\x12\x0c\n\x04\x62ody\x18\x04 \x01(\t\"!\n\x0fMessageResponce\x12\x0e\n\x06status\x18\x01 \x01(\t\":\n\x10SubscribeMessage\x12&\n\x07message\x18\x01 \x01(\x0b\x32\x15.chat.MessageResponce2\xc7\x01\n\x04\x43hat\x12;\n\x08GetUsers\x12\x15.chat.GetUsersRequest\x1a\x16.chat.GetUsersResponse\"\x00\x12<\n\x0bSendMessage\x12\x14.chat.MessageRequest\x1a\x15.chat.MessageResponce\"\x00\x12\x44\n\x10SendListMessages\x12\x14.chat.MessageRequest\x1a\x16.chat.SubscribeMessage\"\x00\x30\x01\x62\x06proto3'
 )
 
 
 
 
-_USERSLIST = _descriptor.Descriptor(
-  name='UsersList',
-  full_name='chat.UsersList',
+_GETUSERSREQUEST = _descriptor.Descriptor(
+  name='GetUsersRequest',
+  full_name='chat.GetUsersRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='login', full_name='chat.UsersList.login', index=0,
+      name='usersrequest', full_name='chat.GetUsersRequest.usersrequest', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='full_name', full_name='chat.UsersList.full_name', index=1,
-      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -60,20 +53,20 @@ _USERSLIST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=20,
-  serialized_end=65,
+  serialized_end=59,
 )
 
 
-_RECEIPTSTATUS = _descriptor.Descriptor(
-  name='ReceiptStatus',
-  full_name='chat.ReceiptStatus',
+_USER_LOGIN = _descriptor.Descriptor(
+  name='Login',
+  full_name='chat.User.Login',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='receipt_status', full_name='chat.ReceiptStatus.receipt_status', index=0,
+      name='login', full_name='chat.User.Login.login', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,10 +84,47 @@ _RECEIPTSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=67,
-  serialized_end=106,
+  serialized_start=69,
+  serialized_end=91,
 )
 
+_USER_FULLNAME = _descriptor.Descriptor(
+  name='FullName',
+  full_name='chat.User.FullName',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='first_name', full_name='chat.User.FullName.first_name', index=0,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='last_name', full_name='chat.User.FullName.last_name', index=1,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=93,
+  serialized_end=142,
+)
 
 _USER = _descriptor.Descriptor(
   name='User',
@@ -104,10 +134,35 @@ _USER = _descriptor.Descriptor(
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[_USER_LOGIN, _USER_FULLNAME, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=61,
+  serialized_end=142,
+)
+
+
+_GETUSERSRESPONSE = _descriptor.Descriptor(
+  name='GetUsersResponse',
+  full_name='chat.GetUsersResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='login', full_name='chat.User.login', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='users', full_name='chat.GetUsersResponse.users', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -123,42 +178,42 @@ _USER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=108,
-  serialized_end=129,
+  serialized_start=144,
+  serialized_end=189,
 )
 
 
-_CHATMESSAGE = _descriptor.Descriptor(
-  name='ChatMessage',
-  full_name='chat.ChatMessage',
+_MESSAGEREQUEST = _descriptor.Descriptor(
+  name='MessageRequest',
+  full_name='chat.MessageRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user_from', full_name='chat.ChatMessage.user_from', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='user_from', full_name='chat.MessageRequest.user_from', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='user_to', full_name='chat.ChatMessage.user_to', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='user_to', full_name='chat.MessageRequest.user_to', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='time_on', full_name='chat.ChatMessage.time_on', index=2,
+      name='created_at', full_name='chat.MessageRequest.created_at', index=2,
       number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='body', full_name='chat.ChatMessage.body', index=3,
+      name='body', full_name='chat.MessageRequest.body', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -176,89 +231,191 @@ _CHATMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=131,
-  serialized_end=211,
+  serialized_start=191,
+  serialized_end=313,
 )
 
-DESCRIPTOR.message_types_by_name['UsersList'] = _USERSLIST
-DESCRIPTOR.message_types_by_name['ReceiptStatus'] = _RECEIPTSTATUS
+
+_MESSAGERESPONCE = _descriptor.Descriptor(
+  name='MessageResponce',
+  full_name='chat.MessageResponce',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='status', full_name='chat.MessageResponce.status', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=315,
+  serialized_end=348,
+)
+
+
+_SUBSCRIBEMESSAGE = _descriptor.Descriptor(
+  name='SubscribeMessage',
+  full_name='chat.SubscribeMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='message', full_name='chat.SubscribeMessage.message', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=350,
+  serialized_end=408,
+)
+
+_USER_LOGIN.containing_type = _USER
+_USER_FULLNAME.containing_type = _USER
+_GETUSERSRESPONSE.fields_by_name['users'].message_type = _USER
+_MESSAGEREQUEST.fields_by_name['user_from'].message_type = _USER_LOGIN
+_MESSAGEREQUEST.fields_by_name['user_to'].message_type = _USER_LOGIN
+_SUBSCRIBEMESSAGE.fields_by_name['message'].message_type = _MESSAGERESPONCE
+DESCRIPTOR.message_types_by_name['GetUsersRequest'] = _GETUSERSREQUEST
 DESCRIPTOR.message_types_by_name['User'] = _USER
-DESCRIPTOR.message_types_by_name['ChatMessage'] = _CHATMESSAGE
+DESCRIPTOR.message_types_by_name['GetUsersResponse'] = _GETUSERSRESPONSE
+DESCRIPTOR.message_types_by_name['MessageRequest'] = _MESSAGEREQUEST
+DESCRIPTOR.message_types_by_name['MessageResponce'] = _MESSAGERESPONCE
+DESCRIPTOR.message_types_by_name['SubscribeMessage'] = _SUBSCRIBEMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-UsersList = _reflection.GeneratedProtocolMessageType('UsersList', (_message.Message,), {
-  'DESCRIPTOR' : _USERSLIST,
+GetUsersRequest = _reflection.GeneratedProtocolMessageType('GetUsersRequest', (_message.Message,), {
+  'DESCRIPTOR' : _GETUSERSREQUEST,
   '__module__' : 'chat_pb2'
-  # @@protoc_insertion_point(class_scope:chat.UsersList)
+  # @@protoc_insertion_point(class_scope:chat.GetUsersRequest)
   })
-_sym_db.RegisterMessage(UsersList)
-
-ReceiptStatus = _reflection.GeneratedProtocolMessageType('ReceiptStatus', (_message.Message,), {
-  'DESCRIPTOR' : _RECEIPTSTATUS,
-  '__module__' : 'chat_pb2'
-  # @@protoc_insertion_point(class_scope:chat.ReceiptStatus)
-  })
-_sym_db.RegisterMessage(ReceiptStatus)
+_sym_db.RegisterMessage(GetUsersRequest)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), {
+
+  'Login' : _reflection.GeneratedProtocolMessageType('Login', (_message.Message,), {
+    'DESCRIPTOR' : _USER_LOGIN,
+    '__module__' : 'chat_pb2'
+    # @@protoc_insertion_point(class_scope:chat.User.Login)
+    })
+  ,
+
+  'FullName' : _reflection.GeneratedProtocolMessageType('FullName', (_message.Message,), {
+    'DESCRIPTOR' : _USER_FULLNAME,
+    '__module__' : 'chat_pb2'
+    # @@protoc_insertion_point(class_scope:chat.User.FullName)
+    })
+  ,
   'DESCRIPTOR' : _USER,
   '__module__' : 'chat_pb2'
   # @@protoc_insertion_point(class_scope:chat.User)
   })
 _sym_db.RegisterMessage(User)
+_sym_db.RegisterMessage(User.Login)
+_sym_db.RegisterMessage(User.FullName)
 
-ChatMessage = _reflection.GeneratedProtocolMessageType('ChatMessage', (_message.Message,), {
-  'DESCRIPTOR' : _CHATMESSAGE,
+GetUsersResponse = _reflection.GeneratedProtocolMessageType('GetUsersResponse', (_message.Message,), {
+  'DESCRIPTOR' : _GETUSERSRESPONSE,
   '__module__' : 'chat_pb2'
-  # @@protoc_insertion_point(class_scope:chat.ChatMessage)
+  # @@protoc_insertion_point(class_scope:chat.GetUsersResponse)
   })
-_sym_db.RegisterMessage(ChatMessage)
+_sym_db.RegisterMessage(GetUsersResponse)
+
+MessageRequest = _reflection.GeneratedProtocolMessageType('MessageRequest', (_message.Message,), {
+  'DESCRIPTOR' : _MESSAGEREQUEST,
+  '__module__' : 'chat_pb2'
+  # @@protoc_insertion_point(class_scope:chat.MessageRequest)
+  })
+_sym_db.RegisterMessage(MessageRequest)
+
+MessageResponce = _reflection.GeneratedProtocolMessageType('MessageResponce', (_message.Message,), {
+  'DESCRIPTOR' : _MESSAGERESPONCE,
+  '__module__' : 'chat_pb2'
+  # @@protoc_insertion_point(class_scope:chat.MessageResponce)
+  })
+_sym_db.RegisterMessage(MessageResponce)
+
+SubscribeMessage = _reflection.GeneratedProtocolMessageType('SubscribeMessage', (_message.Message,), {
+  'DESCRIPTOR' : _SUBSCRIBEMESSAGE,
+  '__module__' : 'chat_pb2'
+  # @@protoc_insertion_point(class_scope:chat.SubscribeMessage)
+  })
+_sym_db.RegisterMessage(SubscribeMessage)
 
 
 
-_GREETER = _descriptor.ServiceDescriptor(
-  name='Greeter',
-  full_name='chat.Greeter',
+_CHAT = _descriptor.ServiceDescriptor(
+  name='Chat',
+  full_name='chat.Chat',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=214,
-  serialized_end=383,
+  serialized_start=411,
+  serialized_end=610,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetUsers',
-    full_name='chat.Greeter.GetUsers',
+    full_name='chat.Chat.GetUsers',
     index=0,
     containing_service=None,
-    input_type=_USERSLIST,
-    output_type=_RECEIPTSTATUS,
+    input_type=_GETUSERSREQUEST,
+    output_type=_GETUSERSRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='SendMessage',
-    full_name='chat.Greeter.SendMessage',
+    full_name='chat.Chat.SendMessage',
     index=1,
     containing_service=None,
-    input_type=_USER,
-    output_type=_CHATMESSAGE,
+    input_type=_MESSAGEREQUEST,
+    output_type=_MESSAGERESPONCE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='ListMessages',
-    full_name='chat.Greeter.ListMessages',
+    name='SendListMessages',
+    full_name='chat.Chat.SendListMessages',
     index=2,
     containing_service=None,
-    input_type=_CHATMESSAGE,
-    output_type=_RECEIPTSTATUS,
+    input_type=_MESSAGEREQUEST,
+    output_type=_SUBSCRIBEMESSAGE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_GREETER)
+_sym_db.RegisterServiceDescriptor(_CHAT)
 
-DESCRIPTOR.services_by_name['Greeter'] = _GREETER
+DESCRIPTOR.services_by_name['Chat'] = _CHAT
 
 # @@protoc_insertion_point(module_scope)

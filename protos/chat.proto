@@ -2,38 +2,69 @@ syntax = "proto3";
 
 package chat;
 
-// The chat service definition.
-service Greeter {
-    // Server gets a list of users and sends receipt status
-    rpc GetUsers(UsersList) returns (ReceiptStatus) {}
+// The chat service for users messaging.
+service Chat {
+    // Gets a list of users
+    rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
 
-    //Server gets user login and send them message
-    rpc SendMessage(User) returns (ChatMessage) {}
+    // Sends a message from user
+    rpc SendMessage(MessageRequest) returns (MessageResponce) {}
 
-    //Server gets messages in queue and subscribe to new ones
-    rpc ListMessages(stream ChatMessage) returns (ReceiptStatus) {}
+    //Gets messages in queue and subscribe to new ones
+    rpc SendListMessages(MessageRequest) returns (stream SubscribeMessage) {}
   }
   
-  // The request message containing the users list.
-  message UsersList {
-    string login = 1;
-    string full_name = 2;
-  }
-  
-  // The response message containing the receipt status.
-  message ReceiptStatus {
-    string receipt_status = 1;
+  // The request message containing for getting list of users.
+  message GetUsersRequest {
+    // Simple string, can be empty
+    string usersrequest = 1;
   }
 
-  // The request message containing user login.
+  // User is represented by login and full name
   message User {
-    string login = 1;
+    // login - identifier of user, required
+    message Login {
+      string login = 1;
+    }
+
+    //Full name of user, contains first name and last name
+    message FullName {
+      // user's first name, required for message
+      string first_name = 2;
+
+      // user's last name, required for message
+      string last_name = 3;
+    }
+  }
+  
+  // The response message containing the list of users.
+  message GetUsersResponse {
+    //list of users for messaging
+    repeated User users = 1;
   }
 
-  // The message containing the users logins, time and message body.
-  message ChatMessage {
-    string user_from = 1;
-    string user_to = 2;
-    int32 time_on = 3;
+  // The message containing the users logins, timestamp created_at and message body.
+  message MessageRequest {
+    // login of user who sends the message
+    User.Login user_from = 1;
+
+    // login of user who receives the message
+    User.Login user_to = 2;
+
+    // timestamp of message creation
+    int32 created_at = 3;
+
+    // the content of the message 
     string body = 4;
+  }
+
+  // MessageResponce can be just simple string, means that message is received
+  message MessageResponce{
+    // string - result, if message was received
+    string status = 1;
+  }
+
+  //A SubscribeMessage is sent to subscribe a new messages
+  message SubscribeMessage{
+    MessageResponce message = 1;
   }

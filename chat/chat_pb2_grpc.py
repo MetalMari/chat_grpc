@@ -5,8 +5,8 @@ import grpc
 import chat_pb2 as chat__pb2
 
 
-class GreeterStub(object):
-    """The chat service definition.
+class ChatStub(object):
+    """The chat service for users messaging.
     """
 
     def __init__(self, channel):
@@ -16,74 +16,74 @@ class GreeterStub(object):
             channel: A grpc.Channel.
         """
         self.GetUsers = channel.unary_unary(
-                '/chat.Greeter/GetUsers',
-                request_serializer=chat__pb2.UsersList.SerializeToString,
-                response_deserializer=chat__pb2.ReceiptStatus.FromString,
+                '/chat.Chat/GetUsers',
+                request_serializer=chat__pb2.GetUsersRequest.SerializeToString,
+                response_deserializer=chat__pb2.GetUsersResponse.FromString,
                 )
         self.SendMessage = channel.unary_unary(
-                '/chat.Greeter/SendMessage',
-                request_serializer=chat__pb2.User.SerializeToString,
-                response_deserializer=chat__pb2.ChatMessage.FromString,
+                '/chat.Chat/SendMessage',
+                request_serializer=chat__pb2.MessageRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageResponce.FromString,
                 )
-        self.ListMessages = channel.stream_unary(
-                '/chat.Greeter/ListMessages',
-                request_serializer=chat__pb2.ChatMessage.SerializeToString,
-                response_deserializer=chat__pb2.ReceiptStatus.FromString,
+        self.SendListMessages = channel.unary_stream(
+                '/chat.Chat/SendListMessages',
+                request_serializer=chat__pb2.MessageRequest.SerializeToString,
+                response_deserializer=chat__pb2.SubscribeMessage.FromString,
                 )
 
 
-class GreeterServicer(object):
-    """The chat service definition.
+class ChatServicer(object):
+    """The chat service for users messaging.
     """
 
     def GetUsers(self, request, context):
-        """Server gets a list of users and sends receipt status
+        """Gets a list of users
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SendMessage(self, request, context):
-        """Server gets user login and send them message
+        """Sends a message from user
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ListMessages(self, request_iterator, context):
-        """Server gets messages in queue and subscribe to new ones
+    def SendListMessages(self, request, context):
+        """Gets messages in queue and subscribe to new ones
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_GreeterServicer_to_server(servicer, server):
+def add_ChatServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetUsers': grpc.unary_unary_rpc_method_handler(
                     servicer.GetUsers,
-                    request_deserializer=chat__pb2.UsersList.FromString,
-                    response_serializer=chat__pb2.ReceiptStatus.SerializeToString,
+                    request_deserializer=chat__pb2.GetUsersRequest.FromString,
+                    response_serializer=chat__pb2.GetUsersResponse.SerializeToString,
             ),
             'SendMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.SendMessage,
-                    request_deserializer=chat__pb2.User.FromString,
-                    response_serializer=chat__pb2.ChatMessage.SerializeToString,
+                    request_deserializer=chat__pb2.MessageRequest.FromString,
+                    response_serializer=chat__pb2.MessageResponce.SerializeToString,
             ),
-            'ListMessages': grpc.stream_unary_rpc_method_handler(
-                    servicer.ListMessages,
-                    request_deserializer=chat__pb2.ChatMessage.FromString,
-                    response_serializer=chat__pb2.ReceiptStatus.SerializeToString,
+            'SendListMessages': grpc.unary_stream_rpc_method_handler(
+                    servicer.SendListMessages,
+                    request_deserializer=chat__pb2.MessageRequest.FromString,
+                    response_serializer=chat__pb2.SubscribeMessage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'chat.Greeter', rpc_method_handlers)
+            'chat.Chat', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Greeter(object):
-    """The chat service definition.
+class Chat(object):
+    """The chat service for users messaging.
     """
 
     @staticmethod
@@ -97,9 +97,9 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/chat.Greeter/GetUsers',
-            chat__pb2.UsersList.SerializeToString,
-            chat__pb2.ReceiptStatus.FromString,
+        return grpc.experimental.unary_unary(request, target, '/chat.Chat/GetUsers',
+            chat__pb2.GetUsersRequest.SerializeToString,
+            chat__pb2.GetUsersResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -114,14 +114,14 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/chat.Greeter/SendMessage',
-            chat__pb2.User.SerializeToString,
-            chat__pb2.ChatMessage.FromString,
+        return grpc.experimental.unary_unary(request, target, '/chat.Chat/SendMessage',
+            chat__pb2.MessageRequest.SerializeToString,
+            chat__pb2.MessageResponce.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ListMessages(request_iterator,
+    def SendListMessages(request,
             target,
             options=(),
             channel_credentials=None,
@@ -131,8 +131,8 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/chat.Greeter/ListMessages',
-            chat__pb2.ChatMessage.SerializeToString,
-            chat__pb2.ReceiptStatus.FromString,
+        return grpc.experimental.unary_stream(request, target, '/chat.Chat/SendListMessages',
+            chat__pb2.MessageRequest.SerializeToString,
+            chat__pb2.SubscribeMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
