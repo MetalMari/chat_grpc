@@ -8,70 +8,58 @@ service Chat {
     rpc GetUsers(GetUsersRequest) returns (GetUsersReply) {}
 
     // Sends a message from user. 
-    rpc SendMessage(MessageRequest) returns (MessageReply) {}
+    rpc SendMessage(SendMessageRequest) returns (SendMessageReply) {}
 
-    //Gets messages in queue and subscribe to new ones. 
-    rpc Subscribe(SubscribeRequest) returns (stream SubscribeReply) {}
+    // Gets messages in queue and subscribe to new ones. 
+    rpc Subscribe(SubscribeRequest) returns (stream Message) {}
   }
   
-  // The request message containing for getting list of users. 
-  message GetUsersRequest {
-    // Simple string, can be empty. 
-    string usersrequest = 1;
-  }
+  // The request message containing for getting list of users, can be empty.  
+  message GetUsersRequest {}
 
   // User is represented by login and full name. 
   message User {
-    // login - identifier of user, required. 
+    // Login - identifier of user, required. 
     string login = 1;
 
-    // user's first name, required for message. 
-    string first_name = 2;
-
-    // user's last name, required for message. 
-    string last_name = 3;
+    // User's full name, required for message. 
+    string full_name = 2;
   }
   
   // The response message containing the list of users. 
   message GetUsersReply {
-    //list of users for messaging. 
+    // List of users for messaging. 
     repeated User users = 1;
   }
 
   // The message containing the users logins, timestamp created_at and message body. 
   message Message {
-    // login of user who sends the message. 
+    // Login of user who sends the message. 
     string login_from = 1;
 
-    // login of user who receives the message. 
+    // Login of user who receives the message. 
     string login_to = 2;
 
-    // timestamp of message creation. 
+    // Timestamp of message creation. 
     int32 created_at = 3;
 
-    // the content of the message. 
+    // The content of the message. 
     string body = 4;
   }
 
   // MessageRequest sends message to the server
-  message MessageRequest {
+  message SendMessageRequest {
     Message message_request = 1;
   }
 
   // MessageResponce can be just simple string, means that message is received. 
-  message MessageReply {
-    // string - result, if message was received. 
+  message SendMessageReply {
+    // String - result, if message was received. 
     string status = 1;
   }
 
   // SubscribeMessage is sent to subscribe a new messages. 
   message SubscribeRequest {
-    // login of user, who is subscribed to new messages
+    // Login of user, who is subscribed to new messages. 
     string login = 1;
-  }
-
-  // SubscribeReply is a stream of messages sent by subscription. 
-  message SubscribeReply {
-    // stream of messages by subscription
-    Message message_reply = 1;
   }
