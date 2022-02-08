@@ -1,5 +1,6 @@
 """The Python implementation of the gRPC chat server."""
 
+import logging
 import time
 from concurrent import futures
 
@@ -9,22 +10,21 @@ import chat_pb2
 import chat_pb2_grpc
 
 
-class UsersList(chat_pb2_grpc.ChatServicer):
+class Chat(chat_pb2_grpc.ChatServicer):
     """Provides methods that implement functionality of chat server."""
 
     def GetUsers(self, request, context):
         """Returns list of users."""
-        user_list = [chat_pb2.User(login="user_a", full_name="James Hetfield"),
-                     chat_pb2.User(login="user_b", full_name="Lars Ulrich"),
-                     chat_pb2.User(login="user_c", full_name="Kirk Hammet"),
-                     chat_pb2.User(login="user_d", full_name="Roberto Trujillo")]
+        user_list = [chat_pb2.User(login=f"user_{x}", full_name=f"{x}"*2 + ' ' + f"{x}"*3) for x in 'ABCD']
         return chat_pb2.GetUsersReply(users=user_list)
+
 
     def SendMessage(self, request, context):
         """Returns simple string if the message from client is received."""
         return chat_pb2.SendMessageReply(
-            status=f"Done! {request.login_to} received message from {request.login_from}!"
+            status=f"Done! {request.message.login_to} received message from {request.message.login_from}!"
         )
+
 
     def Subscribe(self, request, context):
         """Returns stream of messages by subscription."""
@@ -36,13 +36,16 @@ class UsersList(chat_pb2_grpc.ChatServicer):
                                    body="This is new message for you!")
             counter -= 1
 
-    def serve():
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        chat_pb2_grpc.add_ChatServicer_to_server(
-            chat_pb2_grpc.ChatServicer(), server)
-        server.add_insecure_port('[::]:50051')
-        server.start()
-        server.wait_for_termination()
 
-    if __name__ == '__main__':
-        serve()
+def serve():
+    """Creates and starts server on defined address and port."""
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    chat_pb2_grpc.add_ChatServicer_to_server(Chat(), server)
+    server.add_insecure_port('[::]:50051')
+    server.start()
+    server.wait_for_termination()
+
+
+if __name__ == '__main__':
+    logging.basicConfig()
+    serve()
