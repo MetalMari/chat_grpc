@@ -1,0 +1,3 @@
+[submodule "chat_protos"]
+	path = chat_protos
+	url = https://github.com/MetalMari/chat_protos.git
