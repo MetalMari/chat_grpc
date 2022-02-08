@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package chat;
-
 // The chat service for users messaging. 
 service Chat {
     // Gets a list of users. 
@@ -49,7 +47,7 @@ service Chat {
 
   // MessageRequest sends message to the server
   message SendMessageRequest {
-    Message message_request = 1;
+    Message message = 1;
   }
 
   // MessageResponce can be just simple string, means that message is received. 
