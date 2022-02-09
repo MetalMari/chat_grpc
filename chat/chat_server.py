@@ -40,7 +40,7 @@ class Chat(chat_pb2_grpc.ChatServicer):
 
 
 def create_serve():
-    """Creates and starts server on defined address and port."""
+    """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(), server)
     server.add_insecure_port('[::]:50051')
