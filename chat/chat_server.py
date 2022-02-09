@@ -39,7 +39,7 @@ class Chat(chat_pb2_grpc.ChatServicer):
             counter -= 1
 
 
-def create_serve():
+def create_server():
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(), server)
@@ -49,6 +49,6 @@ def create_serve():
 
 if __name__ == '__main__':
     logging.basicConfig()
-    server = create_serve()
+    server = create_server()
     server.start()
     server.wait_for_termination()
