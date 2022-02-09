@@ -1,8 +1,5 @@
 """The Python implementation of the gRPC chat client."""
 
-from __future__ import print_function
-
-import logging
 import time
 
 import grpc
@@ -49,5 +46,4 @@ def run():
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
     run()
