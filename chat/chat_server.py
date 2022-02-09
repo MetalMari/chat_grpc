@@ -15,14 +15,17 @@ class Chat(chat_pb2_grpc.ChatServicer):
 
     def GetUsers(self, request, context):
         """Returns list of users."""
-        user_list = [chat_pb2.User(
-            login=f"user_{x}", full_name=f"{x}"*2 + ' ' + f"{x}"*3) for x in 'ABCD']
+        user_list = [
+            chat_pb2.User(login=f"user_{x}",
+                          full_name=f"{x}"*2 + ' ' + f"{x}"*3) for x in 'ABCD'
+        ]
         return chat_pb2.GetUsersReply(users=user_list)
 
     def SendMessage(self, request, context):
         """Returns simple string if the message from client is received."""
         return chat_pb2.SendMessageReply(
-            status=f"Done! {request.message.login_to} received message from {request.message.login_from}!"
+            status=f"Done! {request.message.login_to} received message " +
+            f"from {request.message.login_from}!"
         )
 
     def Subscribe(self, request, context):
@@ -36,15 +39,16 @@ class Chat(chat_pb2_grpc.ChatServicer):
             counter -= 1
 
 
-def serve():
+def create_serve():
     """Creates and starts server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(), server)
     server.add_insecure_port('[::]:50051')
-    server.start()
-    server.wait_for_termination()
+    return server
 
 
 if __name__ == '__main__':
     logging.basicConfig()
-    serve()
+    server = create_serve()
+    server.start()
+    server.wait_for_termination()
