@@ -8,6 +8,21 @@ import chat_pb2
 import chat_pb2_grpc
 
 
+class IncorrectDataError(Exception):
+    """Exception raised for errors in the input data.
+
+    Attributes:
+        message -- explanation of the error.
+    """
+
+    def __init__(self, message="Incorrect data."):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
 def create_parser():
     """Creates parser and returns argument 'action' from choices 
     or None if nothing was given.
@@ -15,31 +30,36 @@ def create_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='''Chat client provides such options:
-                u    - get list of all users,
-                m    - send message for another user,
-                s    - make a subscription.''')
-    parser.add_argument("-a", "--action", choices=['u', 'm', 's'],
-                        help="u - get users, m - send message, s - subscribe")
-    args = parser.parse_args()
-    return args.action
+                users        - get list of all users,
+                message      - send message for another user,
+                subscribe    - make a subscription.''')
+    parser.add_argument("action", choices=['users', 'message', 'subscribe'],
+                        help="get users, send message, to subscribe.")
+    parser.add_argument('-m', '--message', nargs=3,
+                        metavar=('sender', 'recipient', 'content'))
+    parser.add_argument('-s', '--subscribe', action="store", metavar=('login'))
+    return parser
 
 
-def choose_option(choice, stub):
+def is_data_valid(args):
+    """Checks if all data is available for sending a message or subscription."""
+    if args.action == "users" and (args.message or args.subscribe):
+        raise IncorrectDataError
+    elif args.action == "message" and not args.message:
+        raise IncorrectDataError
+    elif args.action == "subscribe" and not args.subscribe:
+        raise IncorrectDataError
+    return True
+
+
+def choose_action(args, stub):
     """Invokes one of the functions depending on the selected option."""
-    if choice == "u":
+    if args.action == "users":
         get_users_list(stub)
-    elif choice == "m":
-        global login_from, login_to, body
-        login_from = input("Input login from: ")
-        login_to = input("Input login to: ")
-        body = input("Input content: ")
-        send_message(stub)
-    elif choice == "s":
-        global login
-        login = input("Input login: ")
-        subscribe(stub)
+    elif args.action == "message":
+        send_message(stub, *args.message)
     else:
-        print("Please, choose option. Use -h or --help for details.")
+        subscribe(stub, args.subscribe)
 
 
 def get_users_list(stub):
@@ -48,7 +68,7 @@ def get_users_list(stub):
     print(users_list.users)
 
 
-def send_message(stub):
+def send_message(stub, login_from, login_to, body):
     """Sends message contained sender's login,
     recipient's login, creation timestamp and body-content.
     """
@@ -60,7 +80,7 @@ def send_message(stub):
     print(response.status)
 
 
-def subscribe(stub):
+def subscribe(stub, login):
     """Gets and prints all messages, given in stream."""
     messages = stub.Subscribe(chat_pb2.SubscribeRequest(login=login))
     for message in messages:
@@ -69,10 +89,16 @@ def subscribe(stub):
 
 def run():
     """Creates and runs channel."""
-    with grpc.insecure_channel('[::]:50051') as channel:
-        stub = chat_pb2_grpc.ChatStub(channel)
-        option = create_parser()
-        choose_option(option, stub)
+    parser = create_parser()
+    args = parser.parse_args()
+    try:
+        is_data_valid(args)
+    except IncorrectDataError as error:
+        print(error)
+    else:
+        with grpc.insecure_channel('[::]:50051') as channel:
+            stub = chat_pb2_grpc.ChatStub(channel)
+            choose_action(args, stub)
 
 
 if __name__ == '__main__':
