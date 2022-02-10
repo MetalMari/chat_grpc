@@ -11,6 +11,9 @@ import chat_pb2_grpc
 class IncorrectDataError(Exception):
     """Exception raised for errors in the input data."""
 
+    def __init__(self, msg):
+        self.msg = msg
+
 
 def create_parser():
     """Creates parser and return parser with required argument 'action' from
