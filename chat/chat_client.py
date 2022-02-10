@@ -13,8 +13,8 @@ class IncorrectDataError(Exception):
 
 
 def create_parser():
-    """Creates parser and returns argument 'action' from choices 
-    or None if nothing was given.
+    """Creates parser and return parser with required argument 'action' from
+    choices and optional data for sending message or subscription.
     """
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -62,7 +62,7 @@ def choose_action(args, stub):
 
 
 def get_users_list(args, stub):
-    """Gets list of users."""
+    """Gets list of users if data from client is correct."""
     try:
         users_list_data_valid_or_raiserror(args)
     except IncorrectDataError as error:
@@ -74,7 +74,8 @@ def get_users_list(args, stub):
 
 def send_message(args, stub):
     """Sends message contained sender's login,
-    recipient's login, creation timestamp and body-content.
+    recipient's login, creation timestamp and body-content
+    if data from client is correct.
     """
     try:
         message_data_valid_or_raiserror(args)
@@ -94,7 +95,9 @@ def send_message(args, stub):
 
 
 def subscribe(args, stub):
-    """Gets and prints all messages, given in stream."""
+    """Gets and prints all messages, given in stream 
+    if data from client is correct.
+    """
     try:
         subscribe_data_valid_or_raiserror(args)
     except IncorrectDataError as error:
