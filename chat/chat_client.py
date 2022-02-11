@@ -11,9 +11,6 @@ import chat_pb2_grpc
 class IncorrectDataError(Exception):
     """Exception raised for errors in the input data."""
 
-    def __init__(self, msg):
-        self.msg = msg
-
 
 def create_parser():
     """Creates parser and return parser with required argument 'action' from
@@ -33,13 +30,6 @@ def create_parser():
     return parser
 
 
-def users_list_data_valid_or_raiserror(args):
-    """Checks if there isn't unexpected data from user."""
-    if args.message or args.subscribe:
-        raise IncorrectDataError(
-            "Unexpected data. Please, check action or data.")
-
-
 def message_data_valid_or_raiserror(args):
     """Checks if all data is available for sending a message."""
     if not args.message:
@@ -57,22 +47,17 @@ def subscribe_data_valid_or_raiserror(args):
 def choose_action(args, stub):
     """Invokes one of the functions depending on the selected option."""
     if args.action == "users":
-        get_users_list(args, stub)
+        get_users_list(stub)
     elif args.action == "message":
         send_message(args, stub)
     else:
         subscribe(args, stub)
 
 
-def get_users_list(args, stub):
+def get_users_list(stub):
     """Gets list of users if data from client is correct."""
-    try:
-        users_list_data_valid_or_raiserror(args)
-    except IncorrectDataError as error:
-        print(error)
-    else:
-        users_list = stub.GetUsers(chat_pb2.GetUsersRequest())
-        print(users_list.users)
+    users_list = stub.GetUsers(chat_pb2.GetUsersRequest())
+    print(users_list.users)
 
 
 def send_message(args, stub):
@@ -80,36 +65,28 @@ def send_message(args, stub):
     recipient's login, creation timestamp and body-content
     if data from client is correct.
     """
-    try:
-        message_data_valid_or_raiserror(args)
-    except IncorrectDataError as error:
-        print(error)
-    else:
-        login_from = args.message[0]
-        login_to = args.message[1]
-        body = args.message[2]
-        message = chat_pb2.Message(login_from=login_from,
-                                   login_to=login_to,
-                                   created_at=int(time.time()),
-                                   body=body)
-        response = stub.SendMessage(
-            chat_pb2.SendMessageRequest(message=message))
-        print(response.status)
+    message_data_valid_or_raiserror(args)
+    login_from = args.message[0]
+    login_to = args.message[1]
+    body = args.message[2]
+    message = chat_pb2.Message(login_from=login_from,
+                                login_to=login_to,
+                                created_at=int(time.time()),
+                                body=body)
+    response = stub.SendMessage(
+        chat_pb2.SendMessageRequest(message=message))
+    print(response.status)
 
 
 def subscribe(args, stub):
     """Gets and prints all messages, given in stream 
     if data from client is correct.
     """
-    try:
-        subscribe_data_valid_or_raiserror(args)
-    except IncorrectDataError as error:
-        print(error)
-    else:
-        login = args.subscribe
-        messages = stub.Subscribe(chat_pb2.SubscribeRequest(login=login))
-        for message in messages:
-            print(message)
+    subscribe_data_valid_or_raiserror(args)
+    login = args.subscribe
+    messages = stub.Subscribe(chat_pb2.SubscribeRequest(login=login))
+    for message in messages:
+        print(message)
 
 
 def run():
