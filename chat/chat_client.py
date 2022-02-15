@@ -1,4 +1,5 @@
 """The Python implementation of the gRPC chat client."""
+
 import argparse
 import time
 
