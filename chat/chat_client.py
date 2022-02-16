@@ -72,7 +72,6 @@ def send_message(args, stub):
     body = args.message[2]
     message = chat_pb2.Message(login_from=login_from,
                                 login_to=login_to,
-                                created_at=int(time.time()),
                                 body=body)
     response = stub.SendMessage(
         chat_pb2.SendMessageRequest(message=message))
