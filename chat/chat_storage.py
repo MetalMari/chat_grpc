@@ -15,6 +15,10 @@ class User:
     login: str
     full_name: str
 
+    def get_unique_key(self):
+        """Creates unique key for saving user."""
+        return "user.{}".format(self.login)
+
 
 @dataclass
 class Message:
@@ -23,10 +27,11 @@ class Message:
     login_to: str
     body: str
     created_at: int = field(default_factory=lambda: int(time.time()))
-    
 
     def get_unique_key(self):
-        return "message.{}.{}.{}".format(self.login_to, self.login_from, self.created_at)
+        """Creates unique key for saving message."""
+        return "message.{}.{}.{}".format(self.login_to, self.login_from,
+                                         self.created_at)
 
 
 class Storage(ABC):
@@ -72,11 +77,10 @@ class EtcdStorage(Storage):
     def __init__(self):
         """Initializes storage client via etcd."""
         self.client = etcd3.client()
-        
 
     def create_user(self, user: User) -> None:
         """Saves user object into etcd using user key."""
-        user_key = self.user_prefix + user.login
+        user_key = user.get_unique_key()
         user_value = json.dumps(asdict(user))
         self.client.put(user_key, user_value)
 
