@@ -61,7 +61,7 @@ class Storage(ABC):
         """Returns list of messages from storage."""
 
     @abstractmethod
-    def delete_user_message(self, message) -> None:
+    def delete_user_message(self, message: Message) -> None:
         """Deletes user-read messages."""
 
 
@@ -110,6 +110,6 @@ class EtcdStorage(Storage):
             messages.append(Message(**message))
         return messages
 
-    def delete_user_message(self, message) -> None:
+    def delete_user_message(self, message: Message) -> None:
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
