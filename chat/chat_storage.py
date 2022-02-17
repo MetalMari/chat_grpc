@@ -104,7 +104,7 @@ class EtcdStorage(Storage):
     def get_user_messages(self, login: str) -> List[Message]:
         """Returns list of messages for specific user."""
         messages = []
-        message_key = "{}{}.".format(MESSAGE_PREFIX,login)
+        message_key = "{}{}.".format(MESSAGE_PREFIX, login)
         messages_from_db = self.client.get_prefix(message_key)
         for value, key in messages_from_db:
             message = json.loads(value.decode())
