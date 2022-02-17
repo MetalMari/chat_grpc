@@ -64,7 +64,8 @@ def initialize_storage():
     """Choses strategy for storage initializing.
     Depends on environment variables.
     """
-    if os.environ.get("STORAGE") == "etcd":
+    storage = os.environ.get("STORAGE")
+    if storage == "etcd":
         return chat_storage.EtcdStorage()
 
 
