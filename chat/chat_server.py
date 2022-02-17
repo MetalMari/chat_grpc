@@ -72,7 +72,7 @@ def create_server():
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     storage = initialize_storage()
-    if os.environ.get("FILL_USERS") == "storage_users":
+    if os.environ.get("FILL_USERS"):
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
     server.add_insecure_port("[::]:50051")
