@@ -49,7 +49,7 @@ class Chat(chat_pb2_grpc.ChatServicer):
                                        created_at=message.created_at,
                                        body=message.body)
                 self.storage.delete_user_message(message)
-                time.sleep(5)
+                time.sleep(1)
 
 
 def create_users_list(storage):
