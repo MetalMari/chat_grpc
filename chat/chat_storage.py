@@ -9,6 +9,10 @@ from typing import List
 import etcd3
 
 
+USER_PREFIX = "user."
+MESSAGE_PREFIX = "message."
+
+
 @dataclass
 class User:
     """Class for user entity."""
@@ -45,7 +49,7 @@ class Storage(ABC):
         """Initializes Storage object."""
 
     @abstractmethod
-    def create_user(self, user: User) -> None:
+    def create_user(self, user: User):
         """Saves users in storage."""
 
     @abstractmethod
@@ -53,7 +57,7 @@ class Storage(ABC):
         """Returns users list from storage."""
 
     @abstractmethod
-    def create_message(self, message: Message) -> None:
+    def create_message(self, message: Message):
         """Saves messages in storage."""
 
     @abstractmethod
@@ -61,7 +65,7 @@ class Storage(ABC):
         """Returns list of messages from storage."""
 
     @abstractmethod
-    def delete_user_message(self, message: Message) -> None:
+    def delete_user_message(self, message: Message):
         """Deletes user-read messages."""
 
 
@@ -71,14 +75,11 @@ class EtcdStorage(Storage):
     message for specific user.
     """
 
-    user_prefix = "user."
-    message_prefix = "message."
-
     def __init__(self):
         """Initializes storage client via etcd."""
         self.client = etcd3.client()
 
-    def create_user(self, user: User) -> None:
+    def create_user(self, user: User):
         """Saves user object into etcd using user key."""
         user_key = user.get_unique_key()
         user_value = json.dumps(asdict(user))
@@ -87,12 +88,12 @@ class EtcdStorage(Storage):
     def get_users_list(self) -> List[User]:
         """Returns list of users."""
         users = []
-        for value, key in self.client.get_prefix(self.user_prefix):
+        for value, key in self.client.get_prefix(USER_PREFIX):
             user = json.loads(value.decode())
             users.append(User(**user))
         return users
 
-    def create_message(self, message: Message) -> None:
+    def create_message(self, message: Message):
         """Saves message object into etcd using message key.
         Message key includes user login and timestamp created_at to be unique.
         """
@@ -103,13 +104,13 @@ class EtcdStorage(Storage):
     def get_user_messages(self, login: str) -> List[Message]:
         """Returns list of messages for specific user."""
         messages = []
-        message_key = self.message_prefix + login
+        message_key = "{}{}.".format(MESSAGE_PREFIX,login)
         messages_from_db = self.client.get_prefix(message_key)
         for value, key in messages_from_db:
             message = json.loads(value.decode())
             messages.append(Message(**message))
         return messages
 
-    def delete_user_message(self, message: Message) -> None:
+    def delete_user_message(self, message: Message):
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
