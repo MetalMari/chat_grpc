@@ -93,7 +93,7 @@ def run():
     """Creates and runs channel."""
     parser = create_parser()
     args = parser.parse_args()
-    with grpc.insecure_channel('[::]:50051') as channel:
+    with grpc.insecure_channel('localhost:50051') as channel:
         stub = chat_pb2_grpc.ChatStub(channel)
         choose_action(args, stub)
 

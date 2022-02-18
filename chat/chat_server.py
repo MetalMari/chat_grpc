@@ -60,28 +60,32 @@ def create_users_list(storage):
         storage.create_user(user)
 
 
-def initialize_storage():
+def initialize_storage(host, port):
     """Choses strategy for storage initializing.
     Depends on environment variables.
     """
     storage = os.environ.get("STORAGE")
     if storage == "etcd":
-        return chat_storage.EtcdStorage()
+        return chat_storage.EtcdStorage(host, port)
 
 
 def create_server():
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    storage = initialize_storage()
+    storage = initialize_storage(storage_host, storage_port)
     if os.environ.get("FILL_USERS"):
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
-    server.add_insecure_port("[::]:50051")
+    server.add_insecure_port("{}:{}".format(server_host, server_port))
     return server
 
 
 if __name__ == '__main__':
     logging.basicConfig()
+    storage_host = os.environ.get("STORAGE_HOST")
+    storage_port = os.environ.get("STORAGE_PORT")
+    server_host = os.environ.get("SERVER_HOST")
+    server_port = os.environ.get("SERVER_PORT")
     server = create_server()
     server.start()
     server.wait_for_termination()

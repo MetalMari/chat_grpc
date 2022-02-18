@@ -45,7 +45,7 @@ class Storage(ABC):
     """
 
     @abstractmethod
-    def __init__(self):
+    def __init__(self, host, port):
         """Initializes Storage object."""
 
     @abstractmethod
@@ -75,9 +75,9 @@ class EtcdStorage(Storage):
     message for specific user.
     """
 
-    def __init__(self):
+    def __init__(self, host, port):
         """Initializes storage client via etcd."""
-        self.client = etcd3.client()
+        self.client = etcd3.client(host=host, port=port)
 
     def create_user(self, user: User):
         """Saves user object into etcd using user key."""
