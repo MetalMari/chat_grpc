@@ -68,7 +68,6 @@ def initialize_storage(host, port):
     if storage == "etcd":
         return chat_storage.EtcdStorage(host, port)
 
-
 def create_server():
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
