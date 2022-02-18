@@ -5,30 +5,32 @@ networks:
     driver: bridge
 
 services:
+  storage:
+    image: 'bitnami/etcd:latest'
+    container_name: chat_storage
+    ports:
+      - 2379:2379
+      - 2380:2380
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-client:2379
+
   server:
     build:
       context: .
       dockerfile: server.Dockerfile
-      container_name: chat_server
-      ports:
-        - 
-      volumes:
-        # - ./ 
-      environment:
-        # - ={}
-      networks:
+    container_name: chat_server
+    ports:
+      - 50051:50051
+    environment:
+      - FILL_USERS=True
+      - STORAGE=etcd
+      - SERVER_HOST=localhost
+      - SERVER_PORT=50051
+      - STORAGE_HOST=chat_storage
+      - STORAGE_PORT=2379
+    networks:
       - app-tier
-
-  storage:
-    build:
-      image: 'bitnami/etcd:latest'
-      container_name: chat_storage
-      ports:
-        - 2379:2379
-        - 2380:2380
-      volumes:
-        - ./storage:/opt/bitnami/etcd/conf/etcd.conf.yml
-      environment:
-        - ALLOW_NONE_AUTHENTICATION=yes
-        - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-      
+    restart: on-failure
+    depends_on:
+      - storage
