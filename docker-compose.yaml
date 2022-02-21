@@ -11,26 +11,20 @@ services:
     ports:
       - 2379:2379
       - 2380:2380
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    env_file:
+      - ./etc/.env
     networks:
       - app-tier
 
   server:
     build:
       context: .
-      dockerfile: server.Dockerfile
+      dockerfile: ./chat_docker/server/Dockerfile
     container_name: chat_server
     ports:
       - 50051:50051
-    environment:
-      - FILL_USERS=True
-      - STORAGE=etcd
-      - SERVER_HOST=localhost
-      - SERVER_PORT=50051
-      - STORAGE_HOST=storage
-      - STORAGE_PORT=2379
+    env_file:
+      - ./etc/.env
     networks:
       - app-tier
     restart: on-failure
