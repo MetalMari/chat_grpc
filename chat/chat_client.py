@@ -23,11 +23,15 @@ def create_parser():
                 users        - get list of all users,
                 message      - send message for another user,
                 subscribe    - make a subscription.''')
-    parser.add_argument("action", choices=['users', 'message', 'subscribe'],
+    parser.add_argument("action", choices=["users", "message", "subscribe"],
                         help="get users, send message, to subscribe.")
     parser.add_argument('-m', '--message', nargs=3,
                         metavar=('login_from', 'login_to', 'text_body'))
     parser.add_argument('-s', '--subscribe', metavar=('login'))
+    parser.add_argument('-host', '--host', default='localhost',
+                        help="define host for connection.")
+    parser.add_argument('-p', '--port', default=50051,
+                        help="define port for connection.")
     return parser
 
 
@@ -71,8 +75,8 @@ def send_message(args, stub):
     login_to = args.message[1]
     body = args.message[2]
     message = chat_pb2.Message(login_from=login_from,
-                                login_to=login_to,
-                                body=body)
+                               login_to=login_to,
+                               body=body)
     response = stub.SendMessage(
         chat_pb2.SendMessageRequest(message=message))
     print(response.status)
@@ -93,7 +97,8 @@ def run():
     """Creates and runs channel."""
     parser = create_parser()
     args = parser.parse_args()
-    with grpc.insecure_channel('[::]:50051') as channel:
+    address = "{}:{}".format(args.host, args.port)
+    with grpc.insecure_channel(address) as channel:
         stub = chat_pb2_grpc.ChatStub(channel)
         choose_action(args, stub)
 
