@@ -26,14 +26,14 @@ class TestEtcdStorage(TestCase):
         self.storage = EtcdStorage(host="localhost", port=2379)
 
     def test_create_user(self):
-        """Tests create user method."""
+        """Tests 'create_user' method."""
         self.client.put = mock.Mock()
         self.storage.create_user(self.user1)
         self.client.put.assert_called_once_with(
             "user.userA", '{"login": "userA", "full_name": "AA AAA"}')
 
     def test_create_message(self):
-        """Tests create message method."""
+        """Tests 'create_message' method."""
         self.client.put = mock.Mock()
         self.storage.create_message(self.message1)
         self.client.put.assert_called_once_with(
@@ -41,7 +41,7 @@ class TestEtcdStorage(TestCase):
             '{"login_from": "user1", "login_to": "userB", "body": "Hello!", "created_at": 1234}')
 
     def test_get_users_list(self):
-        """Tests users list method."""
+        """Tests 'users_list' method."""
         self.client.get_prefix.return_value = [
             ('{"login": "userA", "full_name": "AA AAA"}'.encode(), "user1"),
             ('{"login": "userB", "full_name": "BB BBB"}'.encode(), "user2")]
@@ -50,7 +50,7 @@ class TestEtcdStorage(TestCase):
         self.assertListEqual(expected, users)
 
     def test_get_user_messages(self):
-        """Tests get user messages method."""
+        """Tests 'get_user_messages' method."""
         self.client.get_prefix.return_value = [
             ('{"login_from": "user1","login_to": "userB",\
             "body": "Hello!","created_at": 1234}'.encode(), "message1"),
@@ -61,7 +61,7 @@ class TestEtcdStorage(TestCase):
         self.assertListEqual(expected, messages)
 
     def test_delete_user_message(self):
-        """Tests delete user message method."""
+        """Tests 'delete_user_message' method."""
         self.client.delete = mock.Mock()
         self.storage.delete_user_message(self.message1)
         self.client.delete.assert_called_once_with("message.userB.user1.1234")
