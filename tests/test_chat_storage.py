@@ -47,6 +47,7 @@ class TestEtcdStorage(TestCase):
             ('{"login": "userB", "full_name": "BB BBB"}'.encode(), "user2")]
         users = self.storage.get_users_list()
         expected = [self.user1, self.user2]
+        self.client.get_prefix.assert_called_with("user.")
         self.assertListEqual(expected, users)
 
     def test_get_user_messages(self):
@@ -58,6 +59,7 @@ class TestEtcdStorage(TestCase):
             "body": "Hello, you!", "created_at": 5678}'.encode(), "user2")]
         messages = self.storage.get_user_messages("userB")
         expected = [self.message1, self.message2]
+        self.client.get_prefix.assert_called_with("message.userB.")
         self.assertListEqual(expected, messages)
 
     def test_delete_user_message(self):
@@ -79,7 +81,7 @@ class TestUserInstance(TestCase):
         user = User(**self.user_data)
         key = user.get_unique_key()
         expected_key = "user.user1"
-        self.assertEqual(key, expected_key)
+        self.assertEqual(expected_key, key)
 
 
 class TestMessageInstance(TestCase):
@@ -95,4 +97,4 @@ class TestMessageInstance(TestCase):
         user = Message(**self.message_data)
         key = user.get_unique_key()
         expected_key = "message.user2.user1.1234"
-        self.assertEqual(key, expected_key)
+        self.assertEqual(expected_key, key)
