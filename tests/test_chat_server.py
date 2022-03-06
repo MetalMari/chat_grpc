@@ -95,4 +95,3 @@ class TestServerFunctions(TestCase):
         mock_os.get.return_value = "etcd"
         storage = chat_server.initialize_storage('localhost', 2379)
         self.assertIsInstance(storage, EtcdStorage)
-        
