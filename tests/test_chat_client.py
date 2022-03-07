@@ -67,9 +67,10 @@ class TestChatClient(TestCase):
         stub.SendMessage = mock.Mock()
         chat_client.send_message(args, stub) 
         message = chat_pb2.Message(login_from="userA",
-                               login_to="userB",
-                               body="Hello.")
-        stub.SendMessage.assert_called_once_with(chat_pb2.SendMessageRequest(message=message))
+                                   login_to="userB",
+                                   body="Hello.")
+        stub.SendMessage.assert_called_once_with(
+            chat_pb2.SendMessageRequest(message=message))
 
     def test_subscribe(self):
         """Tests 'subscribe' method."""
@@ -78,4 +79,5 @@ class TestChatClient(TestCase):
         stub.Subscribe = mock.Mock()
         stub.Subscribe.return_value = ["message1", "message2", "message3"]
         chat_client.subscribe(args, stub)
-        stub.Subscribe.assert_called_once_with(chat_pb2.SubscribeRequest(login=args.subscribe))
+        stub.Subscribe.assert_called_once_with(
+            chat_pb2.SubscribeRequest(login=args.subscribe))
