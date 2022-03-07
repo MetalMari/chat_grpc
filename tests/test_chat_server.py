@@ -1,6 +1,7 @@
 """Python module for testing 'chat_server' module."""
 
 from unittest import mock, TestCase
+from itertools import islice
 
 from chat import chat_pb2
 from chat.chat_storage import User, Message, EtcdStorage
@@ -18,7 +19,6 @@ class TestChat(TestCase):
         cls.user1 = User(login="userA", full_name="AA AAA")
         cls.user2 = User(login="userB", full_name="BB BBB")
         
-
     def test_GetUsers(self):
         """Tests 'GetUsers' method."""
         self.storage.client.get_prefix.return_value = [self.user1, self.user2]
@@ -60,19 +60,18 @@ class TestChat(TestCase):
             Message(login_from="A", login_to="B", body="Hello, you!", created_at=1234),
             Message(login_from="C", login_to="B", body="Hello!", created_at=12345)]
         messages = self.storage.get_user_messages(request.login)
-        expected = (chat_pb2.Message(login_from=message.login_from,
+        expected = [chat_pb2.Message(login_from=message.login_from,
                                      login_to=message.login_to,
                                      created_at=message.created_at,
-                                     body=message.body) for message in messages)
-        result = self.chat.Subscribe(request, context)
-        result_list = [next(result), next(result), next(result)]
+                                     body=message.body) for message in messages]
+        result = [message for message in islice(self.chat.Subscribe(request, context), 0, 3)]
         calls = [mock.call(Message(login_from="A",login_to="B",
                                    body="Hello, you!", created_at=1234)), 
                  mock.call(Message(login_from='C', login_to='B',
                                    body='Hello!', created_at=12345))]
         self.storage.get_user_messages.assert_called_with("B")
         self.storage.delete_user_message.assert_has_calls(calls)
-        self.assertListEqual(list(expected), result_list[:2])
+        self.assertListEqual(expected, result[:2])
 
 
 class TestServerFunctions(TestCase):
@@ -84,9 +83,7 @@ class TestServerFunctions(TestCase):
         self.storage.create_user = mock.Mock()
         chat_server.create_users_list(self.storage)
         calls = [mock.call(User(login='user_A', full_name='AA AAA')),
-                 mock.call(User(login='user_B', full_name='BB BBB')),
-                 mock.call(User(login='user_C', full_name='CC CCC')),
-                 mock.call(User(login='user_D', full_name='DD DDD'))]
+                 mock.call(User(login='user_B', full_name='BB BBB'))]
         self.storage.create_user.assert_has_calls(calls)
 
     @mock.patch("chat.chat_server.os.environ")
