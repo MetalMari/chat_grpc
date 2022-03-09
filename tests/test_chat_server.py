@@ -13,11 +13,15 @@ class TestChat(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Creates objects to be used by the tests."""
-        cls.storage = mock.Mock()
-        cls.chat = chat_server.Chat(cls.storage)
+        """Creates users to be used by the tests."""
         cls.user1 = User(login="userA", full_name="AA AAA")
         cls.user2 = User(login="userB", full_name="BB BBB")
+
+    def setUp(self):
+        """Creates storage and chat object to be used by the tests."""
+        self.storage = mock.Mock()
+        self.chat = chat_server.Chat(self.storage)
+
         
     def test_GetUsers(self):
         """Tests 'GetUsers' method."""
@@ -37,12 +41,11 @@ class TestChat(TestCase):
         request = mock.Mock(message=mock.Mock(login_from="userA",
                                               login_to = "userB",
                                               body = "Hello, you."))
-        context = mock.Mock()
         expected = chat_pb2.SendMessageReply(
             status=f"Done! {request.message.login_to} received message " +
             f"from {request.message.login_from}!"
         )
-        result = self.chat.SendMessage(request, context)
+        result = self.chat.SendMessage(request, mock.Mock())
         self.storage.create_message.assert_called_with(
             Message(request.message.login_from, request.message.login_to, request.message.body))                                                  
         self.assertEqual(expected, result)
@@ -51,21 +54,23 @@ class TestChat(TestCase):
     def test_Subscribe(self, mock_time):
         """Tests 'Subscribe' method."""
         mock_time.return_value = None
-        self.storage.get_user_messages = mock.Mock()
-        self.storage.delete_user_message = mock.Mock()
         request = mock.Mock(login="B")
         context = mock.Mock()
         context.is_active.return_value = True
         self.storage.get_user_messages.return_value = [
             Message(login_from="A", login_to="B", body="Hello, you!", created_at=1234),
             Message(login_from="C", login_to="B", body="Hello!", created_at=12345)]
-        messages = self.storage.get_user_messages(request.login)
-        expected = [chat_pb2.Message(login_from=message.login_from,
-                                     login_to=message.login_to,
-                                     created_at=message.created_at,
-                                     body=message.body) for message in messages]
+        expected = [chat_pb2.Message(login_from="A",
+                                     login_to="B",
+                                     created_at=1234,
+                                     body="Hello, you!"),
+                    chat_pb2.Message(login_from="C",
+                                     login_to="B",
+                                     created_at=12345,
+                                     body="Hello!")
+        ]
         result = [message for message in islice(self.chat.Subscribe(request, context), 0, 3)]
-        calls = [mock.call(Message(login_from="A",login_to="B",
+        calls = [mock.call(Message(login_from="A", login_to="B",
                                    body="Hello, you!", created_at=1234)), 
                  mock.call(Message(login_from='C', login_to='B',
                                    body='Hello!', created_at=12345))]
