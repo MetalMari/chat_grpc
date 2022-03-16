@@ -82,7 +82,7 @@ def create_server(storage_host, storage_port, server_host, server_port):
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
+    logging.basicConfig(level=logging.INFO)
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
@@ -90,4 +90,5 @@ if __name__ == '__main__':
     server = create_server(storage_host, storage_port,
                            server_host, server_port)
     server.start()
+    logging.info('Starting server..')
     server.wait_for_termination()
