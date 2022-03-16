@@ -13,7 +13,7 @@ import chat_storage
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
-    
+
     """Provides methods that implement functionality of chat server."""
 
     def __init__(self, storage):
@@ -74,7 +74,7 @@ def create_server(storage_host, storage_port, server_host, server_port):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     storage = initialize_storage(storage_host, storage_port)
-    if os.environ.get("FILL_USERS"):
+    if not storage.get_users_list():
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
     server.add_insecure_port("{}:{}".format(server_host, server_port))
