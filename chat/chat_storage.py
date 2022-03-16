@@ -15,7 +15,9 @@ MESSAGE_PREFIX = "message."
 
 @dataclass
 class User:
+
     """Class for user entity."""
+
     login: str
     full_name: str
 
@@ -26,7 +28,9 @@ class User:
 
 @dataclass
 class Message:
+
     """Class for message entity."""
+
     login_from: str
     login_to: str
     body: str
@@ -39,6 +43,7 @@ class Message:
 
 
 class Storage(ABC):
+
     """Base class for creating storages.All subclasses need to provide methods 
     for initializing storage, creating users, getting all users, creating messages, 
     getting all messages per user, removing specific message for specific user.
@@ -47,29 +52,36 @@ class Storage(ABC):
     @abstractmethod
     def __init__(self, host, port):
         """Initializes Storage object."""
+        pass
 
     @abstractmethod
     def create_user(self, user: User):
         """Saves users in storage."""
+        pass
 
     @abstractmethod
     def get_users_list(self) -> List[User]:
         """Returns users list from storage."""
+        pass
 
     @abstractmethod
     def create_message(self, message: Message):
         """Saves messages in storage."""
+        pass
 
     @abstractmethod
     def get_user_messages(self, login: str) -> List[Message]:
         """Returns list of messages from storage."""
+        pass
 
     @abstractmethod
     def delete_user_message(self, message: Message):
         """Deletes user-read messages."""
+        pass
 
 
 class EtcdStorage(Storage):
+
     """Provides methods for creating users, getting all users, 
     creating messages, getting all messages per user, removing specific
     message for specific user.
@@ -114,4 +126,3 @@ class EtcdStorage(Storage):
     def delete_user_message(self, message: Message):
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
-        

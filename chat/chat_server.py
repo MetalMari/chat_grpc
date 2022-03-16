@@ -13,6 +13,7 @@ import chat_storage
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
+    
     """Provides methods that implement functionality of chat server."""
 
     def __init__(self, storage):

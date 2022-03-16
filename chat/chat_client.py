@@ -10,7 +10,10 @@ import chat_pb2_grpc
 
 
 class IncorrectDataError(Exception):
+
     """Exception raised for errors in the input data."""
+
+    pass
 
 
 def create_parser():
