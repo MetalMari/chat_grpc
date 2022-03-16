@@ -9,7 +9,7 @@ import grpc
 
 import chat_pb2
 import chat_pb2_grpc
-from chat import chat_storage
+import chat_storage
 
 
 class Chat(chat_pb2_grpc.ChatServicer):

@@ -2,7 +2,7 @@
 
 from unittest import TestCase, mock
 
-from chat.chat_storage import EtcdStorage, Message, User
+from chat_storage import EtcdStorage, Message, User
 
 
 class TestEtcdStorage(TestCase):
@@ -18,7 +18,7 @@ class TestEtcdStorage(TestCase):
         cls.message2 = Message(
             login_from="user2", login_to="userB", body="Hello, you!", created_at=5678)
 
-    @mock.patch("chat.chat_storage.etcd3")
+    @mock.patch("chat_storage.etcd3")
     def setUp(self, mock_etcd):
         """Creates client and storage objects to be used by the tests."""
         self.client = mock.Mock()

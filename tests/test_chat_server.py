@@ -3,9 +3,9 @@
 from unittest import mock, TestCase
 from itertools import islice
 
-from chat import chat_pb2
-from chat.chat_storage import User, Message, EtcdStorage
-from chat import chat_server
+import chat_pb2
+from chat_storage import User, Message, EtcdStorage
+import chat_server
 
 
 class TestChat(TestCase):

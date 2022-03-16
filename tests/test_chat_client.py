@@ -2,8 +2,8 @@
 
 from unittest import mock, TestCase
 
-from chat import chat_pb2
-from chat import chat_client
+import chat_pb2
+import chat_client
 
 
 class TestChatClient(TestCase):
@@ -25,20 +25,20 @@ class TestChatClient(TestCase):
         expected = "Incorrect data. Please, check action or data."
         self.assertEqual(str(err.exception), expected)
     
-    @mock.patch("chat.chat_client.get_users_list")
+    @mock.patch("chat_client.get_users_list")
     def test_valid_choose_action_users(self, mock_get_users_list):
         """Tests 'choose_action' method with valid data."""
         stub = mock.Mock()
         chat_client.choose_action(mock.Mock(action="users"), stub)
         mock_get_users_list.assert_called_once_with(stub)
 
-    @mock.patch("chat.chat_client.send_message")
+    @mock.patch("chat_client.send_message")
     def test_unvalid_choose_action_users(self, mock_send_message):
         """Tests 'choose_action' method with unvalid data."""
         chat_client.choose_action(mock.Mock(action="users"), mock.Mock())
         mock_send_message.assert_not_called()
 
-    @mock.patch("chat.chat_client.send_message")
+    @mock.patch("chat_client.send_message")
     def test_valid_choose_action_message(self, mock_send_message):
         """Tests 'choose_action' method with valid data."""
         stub = mock.Mock()
@@ -46,7 +46,7 @@ class TestChatClient(TestCase):
         chat_client.choose_action(args, stub)
         mock_send_message.assert_called_once_with(args, stub)
 
-    @mock.patch("chat.chat_client.subscribe")
+    @mock.patch("chat_client.subscribe")
     def test_valid_choose_action_subscribe(self, mock_subscribe):
         """Tests 'choose_action' method with valid data."""
         args = mock.Mock(action="subscribe")

@@ -114,3 +114,4 @@ class EtcdStorage(Storage):
     def delete_user_message(self, message: Message):
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
+        
