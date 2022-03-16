@@ -39,14 +39,14 @@ def message_data_valid_or_raiserror(args):
     """Checks if all data is available for sending a message."""
     if not args.message:
         raise IncorrectDataError(
-            "Incorrect data. Please, check action or data.")
+            "Incorrect input. Please, check if action 'message' and input message data.")
 
 
 def subscribe_data_valid_or_raiserror(args):
     """Checks if all data is available for subscription."""
     if not args.subscribe:
         raise IncorrectDataError(
-            "Incorrect data. Please, check action or data.")
+            "Incorrect input. Please, check if action 'subscribe' and input login.")
 
 
 def choose_action(args, stub):
