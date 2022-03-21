@@ -25,8 +25,7 @@ Clone repository, go to `chat_protos` directory and update submodules:
 ```bash
 git clone https://github.com/MetalMari/chat_grpc.git
 cd chat_grpc/chat_protos
-git submodule init
-git submodule update
+git submodule update --init --recursive
 ```
 
 ## Installation
@@ -39,7 +38,7 @@ source bash_env.sh
 ## gRPC Code Generation
 Generate gRPC files for python using Makefile:
 ```bash
-make compile
+make compile-proto
 ```
 Generate gRPC code without make:
 ```bash
@@ -72,7 +71,7 @@ python chat_client.py login subscribe
 ## Run Unit Tests
 Run all tests using Makefile:
 ```bash
-make test
+make unittest
 ```
 Run tests without make:
 ```bash

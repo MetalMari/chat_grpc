@@ -8,7 +8,9 @@ COPY ./requirements.txt ./app
 
 WORKDIR /app
 
-RUN pip install -r requirements.txt \
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && pip install -r requirements.txt \
     && python -m grpc_tools.protoc -I./chat_protos --python_out=./chat --grpc_python_out=./chat ./chat_protos/chat.proto
 
 CMD ["python3", "chat/chat_server.py"]
