@@ -33,7 +33,7 @@ class TestChat(TestCase):
         result = self.chat.GetUsers(mock.Mock(), mock.Mock())
         self.assertEqual(expected, result)
 
-    @mock.patch("chat.chat_storage.time.time")
+    @mock.patch("chat_storage.time.time")
     def test_SendMessage(self, mock_time):
         """Tests 'SendMessage' method."""
         mock_time.return_value = 1111
@@ -50,7 +50,7 @@ class TestChat(TestCase):
             Message(request.message.login_from, request.message.login_to, request.message.body))                                                  
         self.assertEqual(expected, result)
 
-    @mock.patch("chat.chat_storage.time.sleep")
+    @mock.patch("chat_storage.time.sleep")
     def test_Subscribe(self, mock_time):
         """Tests 'Subscribe' method."""
         mock_time.return_value = None
