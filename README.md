@@ -73,9 +73,17 @@ Run all tests using Makefile:
 ```bash
 make unittest
 ```
+or with pytest module:
+```bash
+make pytest
+```
 Run tests without make:
 ```bash
 python -m unittest
+```
+or with pytest module:
+```bash
+python -m pytest
 ```
 For measuring code coverage and effectiveness of tests run:
 ```bash

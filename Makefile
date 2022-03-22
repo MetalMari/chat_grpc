@@ -3,3 +3,6 @@ compile-proto:
 
 unittest:
 	python -m unittest
+
+pytest:
+	python -m pytest
