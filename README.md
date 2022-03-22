@@ -77,6 +77,16 @@ Run tests without make:
 ```bash
 python -m unittest
 ```
+For measuring code coverage and effectiveness of tests run:
+```bash
+coverage run -m unittest
+coverage report
+```
+For a nicer presentation, use `coverage html` to get annotated HTML listings detailing missed lines:
+```bash
+coverage html
+```
+Go to `htmlcov` directory, open index.html report in browser.
 
 ## Run Chat With Docker
 At `chat_grpc` directory run command:
