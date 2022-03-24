@@ -2,14 +2,15 @@ FROM python:3.8-slim-buster
 
 ENV PYTHONUNBUFFERED 1
 
-COPY . .
+COPY ./chat ./app/chat
+COPY ./chat_protos ./app/chat_protos
+COPY ./requirements.txt ./app
+
+WORKDIR /app
 
 RUN apt-get update \
     && apt-get upgrade -y \
     && pip install -r requirements.txt \
-    && apt-get install -y make \
-    && make compile
+    && python -m grpc_tools.protoc -I./chat_protos --python_out=./chat --grpc_python_out=./chat ./chat_protos/chat.proto
 
-WORKDIR /chat
-
-CMD ["python3", "chat_server.py"]
+CMD ["python3", "chat/chat_server.py"]
