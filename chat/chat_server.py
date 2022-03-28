@@ -3,6 +3,7 @@
 import logging
 import os
 import time
+from abc import ABC, abstractmethod
 from concurrent import futures
 
 import grpc
@@ -53,6 +54,19 @@ class Chat(chat_pb2_grpc.ChatServicer):
                 time.sleep(1)
 
 
+class StorageFactory:
+
+    """The StorageFactory class declares the create_storage method 
+    that is supposed to return an object of a Storage class.
+    """
+
+    @classmethod
+    def create_storage(cls, storage, host, port):
+        """Returns storage object according to storage type."""
+        storage_dict = {"etcd": chat_storage.EtcdStorage}
+        return storage_dict.get(storage)(host, port)
+
+
 def create_users_list(storage):
     """Creates users and saves them to storage."""
     user_list = [chat_storage.User(f"user_{x}", f"{x}"*2 + ' ' + f"{x}"*3)
@@ -61,19 +75,11 @@ def create_users_list(storage):
         storage.create_user(user)
 
 
-def initialize_storage(host, port):
-    """Choses strategy for storage initializing.
-    Depends on environment variables.
-    """
-    storage = os.environ.get("STORAGE")
-    if storage == "etcd":
-        return chat_storage.EtcdStorage(host, port)
-
-
-def create_server(storage_host, storage_port, server_host, server_port):
+def create_server(storage, storage_host, storage_port, server_host, server_port):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    storage = initialize_storage(storage_host, storage_port)
+    storage = StorageFactory.create_storage(
+        storage, storage_host, storage_port)
     if not storage.get_users_list():
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
@@ -83,11 +89,12 @@ def create_server(storage_host, storage_port, server_host, server_port):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
+    storage = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
     server_port = os.environ.get("SERVER_PORT")
-    server = create_server(storage_host, storage_port,
+    server = create_server(storage, storage_host, storage_port,
                            server_host, server_port)
     server.start()
     logging.info('Starting server..')
