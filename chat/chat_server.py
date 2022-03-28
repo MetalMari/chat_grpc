@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 import time
 from concurrent import futures
 
@@ -63,7 +64,12 @@ class StorageFactory:
     def create_storage(storage_type, host, port):
         """Returns storage object according to storage type."""
         storage_dict = {"etcd": chat_storage.EtcdStorage}
-        return storage_dict.get(storage_type)(host, port)
+        try:
+            return storage_dict[storage_type](host, port)
+        except KeyError:
+            logging.error("Unknown STORAGE name. Please, check if storage \
+name is entered and correct.", exc_info=True)
+            sys.exit(1)
 
 
 def create_users_list(storage):
@@ -74,11 +80,9 @@ def create_users_list(storage):
         storage.create_user(user)
 
 
-def create_server(storage_type, storage_host, storage_port, server_host, server_port):
+def create_server(storage, server_host, server_port):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    storage = StorageFactory.create_storage(
-        storage_type, storage_host, storage_port)
     if not storage.get_users_list():
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
@@ -93,8 +97,9 @@ if __name__ == '__main__':
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
     server_port = os.environ.get("SERVER_PORT")
-    server = create_server(storage_type, storage_host, storage_port,
-                           server_host, server_port)
+    storage = StorageFactory.create_storage(
+        storage_type, storage_host, storage_port)
+    server = create_server(storage, server_host, server_port)
     server.start()
     logging.info('Starting server..')
     server.wait_for_termination()

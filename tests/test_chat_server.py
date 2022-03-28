@@ -22,7 +22,6 @@ class TestChat(TestCase):
         self.storage = mock.Mock()
         self.chat = chat_server.Chat(self.storage)
 
-        
     def test_GetUsers(self):
         """Tests 'GetUsers' method."""
         self.storage.client.get_prefix.return_value = [self.user1, self.user2]
@@ -39,15 +38,15 @@ class TestChat(TestCase):
         mock_time.return_value = 1111
         self.storage.create_message = mock.Mock()
         request = mock.Mock(message=mock.Mock(login_from="userA",
-                                              login_to = "userB",
-                                              body = "Hello, you."))
+                                              login_to="userB",
+                                              body="Hello, you."))
         expected = chat_pb2.SendMessageReply(
             status=f"Done! {request.message.login_to} received message " +
             f"from {request.message.login_from}!"
         )
         result = self.chat.SendMessage(request, mock.Mock())
         self.storage.create_message.assert_called_with(
-            Message(request.message.login_from, request.message.login_to, request.message.body))                                                  
+            Message(request.message.login_from, request.message.login_to, request.message.body))
         self.assertEqual(expected, result)
 
     @mock.patch("chat_storage.time.sleep")
@@ -58,7 +57,8 @@ class TestChat(TestCase):
         context = mock.Mock()
         context.is_active.return_value = True
         self.storage.get_user_messages.return_value = [
-            Message(login_from="A", login_to="B", body="Hello, you!", created_at=1234),
+            Message(login_from="A", login_to="B",
+                    body="Hello, you!", created_at=1234),
             Message(login_from="C", login_to="B", body="Hello!", created_at=12345)]
         expected = [chat_pb2.Message(login_from="A",
                                      login_to="B",
@@ -68,10 +68,11 @@ class TestChat(TestCase):
                                      login_to="B",
                                      created_at=12345,
                                      body="Hello!")
-        ]
-        result = [message for message in islice(self.chat.Subscribe(request, context), 0, 3)]
+                    ]
+        result = [message for message in islice(
+            self.chat.Subscribe(request, context), 0, 3)]
         calls = [mock.call(Message(login_from="A", login_to="B",
-                                   body="Hello, you!", created_at=1234)), 
+                                   body="Hello, you!", created_at=1234)),
                  mock.call(Message(login_from='C', login_to='B',
                                    body='Hello!', created_at=12345))]
         self.storage.get_user_messages.assert_called_with("B")
@@ -91,9 +92,10 @@ class TestServerFunctions(TestCase):
                  mock.call(User(login='user_B', full_name='BB BBB'))]
         self.storage.create_user.assert_has_calls(calls)
 
-    @mock.patch("chat.chat_server.os.environ")
-    def test_initialize_storage(self, mock_os):
-        """Tests 'cinitialize_storage' method."""
-        mock_os.get.return_value = "etcd"
-        storage = chat_server.initialize_storage('localhost', 2379)
+
+class TestStorageFactory(TestCase):
+
+    def test_create_storage(self):
+        storage = chat_server.StorageFactory.create_storage(
+            "etcd", 'localhost', 2379)
         self.assertIsInstance(storage, EtcdStorage)
