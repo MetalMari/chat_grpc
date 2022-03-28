@@ -2,7 +2,6 @@
 
 import logging
 import os
-import sys
 import time
 from concurrent import futures
 
@@ -67,9 +66,9 @@ class StorageFactory:
         try:
             return storage_dict[storage_type](host, port)
         except KeyError:
-            logging.error("Unknown STORAGE name. Please, check if storage \
-name is entered and correct.", exc_info=True)
-            sys.exit(1)
+            print(f"'{storage_type}' unknown STORAGE name. \
+Please, check if storage name is entered and correct.")
+            raise
 
 
 def create_users_list(storage):
