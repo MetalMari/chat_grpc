@@ -9,6 +9,7 @@ import chat_server
 
 
 class TestChat(TestCase):
+
     """Tests Chat class."""
 
     @classmethod
@@ -81,6 +82,7 @@ class TestChat(TestCase):
 
 
 class TestServerFunctions(TestCase):
+
     """Class for testing chat_server functions."""
 
     def test_create_users_list(self):
@@ -95,7 +97,10 @@ class TestServerFunctions(TestCase):
 
 class TestStorageFactory(TestCase):
 
+    """Tests StorageFactory class."""
+
     def test_create_storage(self):
+        """Tests 'create_storage' method."""
         storage = chat_server.StorageFactory.create_storage(
             "etcd", 'localhost', 2379)
         self.assertIsInstance(storage, EtcdStorage)
