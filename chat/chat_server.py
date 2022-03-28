@@ -59,11 +59,11 @@ class StorageFactory:
     that is supposed to return an object of a Storage class.
     """
 
-    @classmethod
-    def create_storage(cls, storage, host, port):
+    @staticmethod
+    def create_storage(storage_type, host, port):
         """Returns storage object according to storage type."""
         storage_dict = {"etcd": chat_storage.EtcdStorage}
-        return storage_dict.get(storage)(host, port)
+        return storage_dict.get(storage_type)(host, port)
 
 
 def create_users_list(storage):
@@ -74,11 +74,11 @@ def create_users_list(storage):
         storage.create_user(user)
 
 
-def create_server(storage, storage_host, storage_port, server_host, server_port):
+def create_server(storage_type, storage_host, storage_port, server_host, server_port):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     storage = StorageFactory.create_storage(
-        storage, storage_host, storage_port)
+        storage_type, storage_host, storage_port)
     if not storage.get_users_list():
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
@@ -88,12 +88,12 @@ def create_server(storage, storage_host, storage_port, server_host, server_port)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    storage = os.environ.get("STORAGE")
+    storage_type = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
     server_port = os.environ.get("SERVER_PORT")
-    server = create_server(storage, storage_host, storage_port,
+    server = create_server(storage_type, storage_host, storage_port,
                            server_host, server_port)
     server.start()
     logging.info('Starting server..')
