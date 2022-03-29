@@ -11,7 +11,7 @@ import sys
 
 import chat_pb2
 import chat_pb2_grpc
-from chat_storage import EtcdStorage, Message, Storage, User
+from chat_storage import Message, Storage, User, StorageFactory, UnknownStorageError
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
@@ -53,29 +53,6 @@ class Chat(chat_pb2_grpc.ChatServicer):
                                        body=message.body)
                 self.storage.delete_user_message(message)
                 time.sleep(1)
-
-
-class UnknownStorageError(Exception):
-
-    """Exception raised if unknown storage name is used."""
-
-    pass
-
-
-class StorageFactory:
-
-    """The StorageFactory class declares the create_storage method 
-    that is supposed to return an object of a Storage class.
-    """
-
-    @staticmethod
-    def create_storage(storage_type: str, host: str, port: str) -> Storage:
-        """Returns storage object according to storage type."""
-        storage_dict = {"etcd": EtcdStorage}
-        try:
-            return storage_dict[storage_type](host, port)
-        except KeyError:
-            raise UnknownStorageError(f"Unknown storage type: {storage_type}")
 
 
 def create_users_list(storage: Storage):

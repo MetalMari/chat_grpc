@@ -126,3 +126,33 @@ class EtcdStorage(Storage):
     def delete_user_message(self, message: Message):
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
+
+
+class UnknownStorageError(Exception):
+    
+    """Exception raised if unknown storage name is used."""
+
+    pass
+
+
+class StorageFactory:
+
+    """The StorageFactory class declares the create_storage method 
+    that is supposed to return an object of a Storage class.
+    """
+
+    @classmethod
+    def storage_register(cls, **storage_data):
+        for key in storage_data:
+            setattr(cls, key, storage_data[key])
+
+    @staticmethod
+    def create_storage(storage_type: str, host: str, port: str):
+        """Returns storage object according to storage type."""
+        try:
+            return StorageFactory.__dict__[storage_type](host, port)
+        except KeyError:
+            raise UnknownStorageError(f"Unknown storage type: {storage_type}")
+
+
+StorageFactory.storage_register(etcd = EtcdStorage)
