@@ -7,6 +7,8 @@ from concurrent import futures
 
 import grpc
 
+import sys
+
 import chat_pb2
 import chat_pb2_grpc
 from chat_storage import EtcdStorage, Message, Storage, User
@@ -73,8 +75,7 @@ class StorageFactory:
         try:
             return storage_dict[storage_type](host, port)
         except KeyError:
-            raise UnknownStorageError(f"'{storage_type}' unknown STORAGE name." +
-                                     "Please, check if storage name is entered and correct.")
+            raise UnknownStorageError(f"Unknown storage type: {storage_type}")
 
 
 def create_users_list(storage: Storage):
@@ -100,7 +101,8 @@ def main():
     Starts the server.
     """
     logging.basicConfig(level=logging.INFO)
-    storage_type = os.environ.get("STORAGE")
+    logger = logging.getLogger("config_logger")
+    storage_type = os.environ.get("STORAE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
@@ -109,7 +111,9 @@ def main():
         storage = StorageFactory.create_storage(
             storage_type, storage_host, storage_port)
     except UnknownStorageError as error:
-        print(error)
+        logger.error(f"{error}. Please, check config file if STORAGE name \
+is entered and correct.")
+        sys.exit(1)
     server = create_server(storage, server_host, server_port)
     server.start()
     logging.info('Starting server..')
