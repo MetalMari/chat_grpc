@@ -53,6 +53,13 @@ class Chat(chat_pb2_grpc.ChatServicer):
                 time.sleep(1)
 
 
+class UnknownStorageName(Exception):
+
+    """Exception raised if unknown storage name is used."""
+
+    pass
+
+
 class StorageFactory:
 
     """The StorageFactory class declares the create_storage method 
@@ -66,9 +73,8 @@ class StorageFactory:
         try:
             return storage_dict[storage_type](host, port)
         except KeyError:
-            print(f"'{storage_type}' unknown STORAGE name. \
-Please, check if storage name is entered and correct.")
-            raise
+            raise UnknownStorageName(f"'{storage_type}' unknown STORAGE name." +
+                                     "Please, check if storage name is entered and correct.")
 
 
 def create_users_list(storage: Storage):
@@ -89,16 +95,25 @@ def create_server(storage: Storage, server_host: str, server_port: str):
     return server
 
 
-if __name__ == '__main__':
+def main():
+    """Gets environment variables, initializes storage and server. 
+    Then starts the server."""
     logging.basicConfig(level=logging.INFO)
     storage_type = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
     server_port = os.environ.get("SERVER_PORT")
-    storage = StorageFactory.create_storage(
-        storage_type, storage_host, storage_port)
+    try:
+        storage = StorageFactory.create_storage(
+            storage_type, storage_host, storage_port)
+    except UnknownStorageName as error:
+        print(error)
     server = create_server(storage, server_host, server_port)
     server.start()
     logging.info('Starting server..')
     server.wait_for_termination()
+
+
+if __name__ == '__main__':
+    main()
