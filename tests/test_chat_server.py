@@ -4,7 +4,8 @@ from unittest import mock, TestCase
 from itertools import islice
 
 import chat_pb2
-from chat_storage import User, Message, EtcdStorage
+from chat_storage import User, Message
+from storages.etcd_storage import EtcdStorage
 import chat_server
 
 
@@ -93,14 +94,3 @@ class TestServerFunctions(TestCase):
         calls = [mock.call(User(login='user_A', full_name='AA AAA')),
                  mock.call(User(login='user_B', full_name='BB BBB'))]
         self.storage.create_user.assert_has_calls(calls)
-
-
-class TestStorageFactory(TestCase):
-
-    """Tests StorageFactory class."""
-
-    def test_create_storage(self):
-        """Tests 'create_storage' method."""
-        storage = chat_server.StorageFactory.create_storage(
-            "etcd", 'localhost', 2379)
-        self.assertIsInstance(storage, EtcdStorage)
