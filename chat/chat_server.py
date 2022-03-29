@@ -102,7 +102,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("config_logger")
-    storage_type = os.environ.get("STORAE")
+    storage_type = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
