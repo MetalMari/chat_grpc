@@ -53,7 +53,7 @@ class Chat(chat_pb2_grpc.ChatServicer):
                 time.sleep(1)
 
 
-class UnknownStorageName(Exception):
+class UnknownStorageError(Exception):
 
     """Exception raised if unknown storage name is used."""
 
@@ -73,7 +73,7 @@ class StorageFactory:
         try:
             return storage_dict[storage_type](host, port)
         except KeyError:
-            raise UnknownStorageName(f"'{storage_type}' unknown STORAGE name." +
+            raise UnknownStorageError(f"'{storage_type}' unknown STORAGE name." +
                                      "Please, check if storage name is entered and correct.")
 
 
@@ -107,7 +107,7 @@ def main():
     try:
         storage = StorageFactory.create_storage(
             storage_type, storage_host, storage_port)
-    except UnknownStorageName as error:
+    except UnknownStorageError as error:
         print(error)
     server = create_server(storage, server_host, server_port)
     server.start()
