@@ -57,4 +57,4 @@ class EtcdStorage(Storage):
         self.client.delete(message.get_unique_key())
 
 
-StorageFactory.storage_register(etcd=EtcdStorage)
+StorageFactory.register_storage(etcd=EtcdStorage) # add EtcdStorage to storage register
