@@ -97,7 +97,8 @@ def create_server(storage: Storage, server_host: str, server_port: str):
 
 def main():
     """Gets environment variables, initializes storage and server. 
-    Then starts the server."""
+    Starts the server.
+    """
     logging.basicConfig(level=logging.INFO)
     storage_type = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
