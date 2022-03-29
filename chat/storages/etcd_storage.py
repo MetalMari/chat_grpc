@@ -1,9 +1,11 @@
+"""This is Python implementation of etcd client to store data."""
+
 import json
 from dataclasses import asdict
 from typing import List
 
 import etcd3
-from chat_storage import Message, Storage, StorageFactory, User
+from chat_storage import Message, Storage, User
 
 USER_PREFIX = "user."
 MESSAGE_PREFIX = "message."
@@ -55,6 +57,3 @@ class EtcdStorage(Storage):
     def delete_user_message(self, message: Message):
         """Deletes message from storage after sending it for user."""
         self.client.delete(message.get_unique_key())
-
-
-StorageFactory.register_storage(etcd=EtcdStorage) # add EtcdStorage to storage register

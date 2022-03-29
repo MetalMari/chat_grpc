@@ -3,8 +3,9 @@
 from curses.ascii import ETB
 from unittest import TestCase, mock
 
-from chat_storage import Message, StorageFactory, UnknownStorageError, User
+from chat_storage import Message, User
 from storages.etcd_storage import EtcdStorage
+from chat_storage_factory import StorageFactory, UnknownStorageError
 
 
 class TestUserInstance(TestCase):

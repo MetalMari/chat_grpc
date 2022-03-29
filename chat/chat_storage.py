@@ -1,4 +1,7 @@
-"""The Python implementation of the etcd chat client."""
+"""This module contains implementation of basic Storage class, 
+interface declares a set of methods for different storage types.
+Also User and Message entities are using for server-storage interaction.
+"""
 
 import time
 from abc import ABC, abstractmethod
@@ -75,31 +78,3 @@ class Storage(ABC):
     def delete_user_message(self, message: Message):
         """Deletes user-read messages."""
         pass
-
-
-class UnknownStorageError(Exception):
-
-    """Exception raised if unknown storage name is used."""
-
-    pass
-
-
-class StorageFactory:
-
-    """The StorageFactory class declares the create_storage method 
-    that is supposed to return an object of a Storage class.
-    """
-
-    @classmethod
-    def register_storage(cls, **storage_data):
-        """Registers Storage subclass as StorageFactory attribute."""
-        for key in storage_data:
-            setattr(cls, key, storage_data[key])
-
-    @staticmethod
-    def create_storage(storage_type: str, host: str, port: str):
-        """Returns storage object according to storage type."""
-        try:
-            return StorageFactory.__dict__[storage_type](host, port)
-        except KeyError:
-            raise UnknownStorageError(f"Unknown storage type: {storage_type}")

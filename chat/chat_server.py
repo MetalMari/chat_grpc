@@ -10,8 +10,8 @@ import grpc
 
 import chat_pb2
 import chat_pb2_grpc
-from chat_storage import Message, Storage, UnknownStorageError, User
-from storages.etcd_storage import StorageFactory
+from chat_storage import Message, Storage, User
+from chat_storage_factory import StorageFactory, UnknownStorageError
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
