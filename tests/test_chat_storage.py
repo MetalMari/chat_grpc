@@ -43,6 +43,7 @@ class TestStorageFactory(TestCase):
     """Tests StorageFactory class."""
 
     def test_register_storage(self):
+        """Tests 'register_storage' method."""
         StorageFactory.register_storage(db="mongo")
         self.assertTrue("db" in StorageFactory.__dict__.keys())
         self.assertEqual("mongo", StorageFactory.__dict__["db"])

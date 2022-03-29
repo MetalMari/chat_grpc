@@ -1,12 +1,11 @@
 """Python module for testing 'chat_server' module."""
 
-from unittest import mock, TestCase
 from itertools import islice
+from unittest import TestCase, mock
 
 import chat_pb2
-from chat_storage import User, Message
-from storages.etcd_storage import EtcdStorage
 import chat_server
+from chat_storage import Message, User
 
 
 class TestChat(TestCase):
