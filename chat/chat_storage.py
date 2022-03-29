@@ -143,6 +143,7 @@ class StorageFactory:
 
     @classmethod
     def storage_register(cls, **storage_data):
+        """Registers Storage subclass as StorageFactory attribute."""
         for key in storage_data:
             setattr(cls, key, storage_data[key])
 
