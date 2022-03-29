@@ -2,16 +2,16 @@
 
 import logging
 import os
+import sys
 import time
 from concurrent import futures
 
 import grpc
 
-import sys
-
 import chat_pb2
 import chat_pb2_grpc
-from chat_storage import Message, Storage, User, StorageFactory, UnknownStorageError
+from chat_storage import Message, Storage, UnknownStorageError, User
+from storages.etcd_storage import StorageFactory
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
