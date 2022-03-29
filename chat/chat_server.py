@@ -9,7 +9,7 @@ import grpc
 
 import chat_pb2
 import chat_pb2_grpc
-import chat_storage
+from chat_storage import EtcdStorage, Message, Storage, User
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
@@ -32,9 +32,9 @@ class Chat(chat_pb2_grpc.ChatServicer):
         """Gets message and saves it to storage. 
         Returns simple string if the message from client is received.
         """
-        self.storage.create_message(chat_storage.Message(request.message.login_from,
-                                                         request.message.login_to,
-                                                         request.message.body))
+        self.storage.create_message(Message(request.message.login_from,
+                                            request.message.login_to,
+                                            request.message.body))
         return chat_pb2.SendMessageReply(
             status=f"Done! {request.message.login_to} received message " +
             f"from {request.message.login_from}!"
@@ -60,9 +60,9 @@ class StorageFactory:
     """
 
     @staticmethod
-    def create_storage(storage_type, host, port):
+    def create_storage(storage_type: str, host: str, port: str) -> Storage:
         """Returns storage object according to storage type."""
-        storage_dict = {"etcd": chat_storage.EtcdStorage}
+        storage_dict = {"etcd": EtcdStorage}
         try:
             return storage_dict[storage_type](host, port)
         except KeyError:
@@ -71,15 +71,15 @@ Please, check if storage name is entered and correct.")
             raise
 
 
-def create_users_list(storage):
+def create_users_list(storage: Storage):
     """Creates users and saves them to storage."""
-    user_list = [chat_storage.User(f"user_{x}", f"{x}"*2 + ' ' + f"{x}"*3)
+    user_list = [User(f"user_{x}", f"{x}"*2 + ' ' + f"{x}"*3)
                  for x in "ABCD"]
     for user in user_list:
         storage.create_user(user)
 
 
-def create_server(storage, server_host, server_port):
+def create_server(storage: Storage, server_host: str, server_port: str):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     if not storage.get_users_list():
