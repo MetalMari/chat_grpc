@@ -1,11 +1,8 @@
 """Python module for testing chat_storage module."""
 
-from curses.ascii import ETB
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from chat_storage import Message, User
-from storages.etcd_storage import EtcdStorage
-from chat_storage_factory import StorageFactory, UnknownStorageError
 
 
 class TestUserInstance(TestCase):
@@ -37,28 +34,3 @@ class TestMessageInstance(TestCase):
         key = user.get_unique_key()
         expected_key = "message.user2.user1.1234"
         self.assertEqual(expected_key, key)
-
-
-class TestStorageFactory(TestCase):
-
-    """Tests StorageFactory class."""
-
-    def test_register_storage(self):
-        """Tests 'register_storage' method."""
-        StorageFactory.register_storage(db="mongo")
-        self.assertTrue("db" in StorageFactory.__dict__.keys())
-        self.assertEqual("mongo", StorageFactory.__dict__["db"])
-
-    def test_create_storage(self):
-        """Tests 'create_storage' method."""
-        storage = StorageFactory.create_storage(
-            "etcd", 'localhost', 2379)
-        self.assertIsInstance(storage, EtcdStorage)
-
-    def test_storage_type_valid_or_raiserror(self):
-        """Tests 'create_storage' method and check raiserror."""
-        with self.assertRaises(UnknownStorageError) as err:
-            StorageFactory.create_storage(
-                "etty", 'local', 2379)
-        expected = "Unknown storage type: etty"
-        self.assertEqual(str(err.exception), expected)
