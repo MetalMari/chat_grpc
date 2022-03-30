@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 import time
 from concurrent import futures
 
@@ -9,7 +10,8 @@ import grpc
 
 import chat_pb2
 import chat_pb2_grpc
-import chat_storage
+from chat_storage import Message, Storage, User
+from chat_storage_factory import StorageFactory, UnknownStorageError
 
 
 class Chat(chat_pb2_grpc.ChatServicer):
@@ -32,9 +34,9 @@ class Chat(chat_pb2_grpc.ChatServicer):
         """Gets message and saves it to storage. 
         Returns simple string if the message from client is received.
         """
-        self.storage.create_message(chat_storage.Message(request.message.login_from,
-                                                         request.message.login_to,
-                                                         request.message.body))
+        self.storage.create_message(Message(request.message.login_from,
+                                            request.message.login_to,
+                                            request.message.body))
         return chat_pb2.SendMessageReply(
             status=f"Done! {request.message.login_to} received message " +
             f"from {request.message.login_from}!"
@@ -53,27 +55,17 @@ class Chat(chat_pb2_grpc.ChatServicer):
                 time.sleep(1)
 
 
-def create_users_list(storage):
+def create_users_list(storage: Storage):
     """Creates users and saves them to storage."""
-    user_list = [chat_storage.User(f"user_{x}", f"{x}"*2 + ' ' + f"{x}"*3)
+    user_list = [User(f"user_{x}", f"{x}"*2 + ' ' + f"{x}"*3)
                  for x in "ABCD"]
     for user in user_list:
         storage.create_user(user)
 
 
-def initialize_storage(host, port):
-    """Choses strategy for storage initializing.
-    Depends on environment variables.
-    """
-    storage = os.environ.get("STORAGE")
-    if storage == "etcd":
-        return chat_storage.EtcdStorage(host, port)
-
-
-def create_server(storage_host, storage_port, server_host, server_port):
+def create_server(storage: Storage, server_host: str, server_port: str):
     """Creates server on defined address and port."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    storage = initialize_storage(storage_host, storage_port)
     if not storage.get_users_list():
         create_users_list(storage)
     chat_pb2_grpc.add_ChatServicer_to_server(Chat(storage), server)
@@ -81,14 +73,29 @@ def create_server(storage_host, storage_port, server_host, server_port):
     return server
 
 
-if __name__ == '__main__':
+def main():
+    """Gets environment variables, initializes storage and server. 
+    Starts the server.
+    """
     logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger("config_logger")
+    storage_type = os.environ.get("STORAGE")
     storage_host = os.environ.get("STORAGE_HOST")
     storage_port = os.environ.get("STORAGE_PORT")
     server_host = os.environ.get("SERVER_HOST")
     server_port = os.environ.get("SERVER_PORT")
-    server = create_server(storage_host, storage_port,
-                           server_host, server_port)
+    try:
+        storage = StorageFactory.create_storage(
+            storage_type, storage_host, storage_port)
+    except UnknownStorageError as error:
+        logger.error(f"{error}. Please, check config file if STORAGE name \
+is entered and correct.")
+        sys.exit(1)
+    server = create_server(storage, server_host, server_port)
     server.start()
     logging.info('Starting server..')
     server.wait_for_termination()
+
+
+if __name__ == '__main__':
+    main()
