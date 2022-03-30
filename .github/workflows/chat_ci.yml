@@ -20,6 +20,11 @@ jobs:
       run: |
         python3 -m venv virtualvenv
         source virtualvenv/bin/activate
+    - name: Update submodules
+      run: |
+        cd chat_protos
+        git submodule update --init --recursive
+        cd ..
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
