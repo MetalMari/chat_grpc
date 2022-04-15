@@ -61,7 +61,7 @@ python chat_client.py users
 ```
 2. to send message:
 ```bash
-python chat_client.py login_from login_to text_body message
+python chat_client.py -m login_from login_to text_body message
 ```
 3. to subscribe for getting messages:
 ```bash
