@@ -65,7 +65,7 @@ python chat_client.py -m login_from login_to text_body message
 ```
 3. to subscribe for getting messages:
 ```bash
-python chat_client.py login subscribe
+python chat_client.py -s login subscribe
 ```
 
 ## Run Unit Tests
